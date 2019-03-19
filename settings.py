@@ -44,3 +44,8 @@ SETTING_MONTHS = True
 # 3 -> change the filename to the "created date" and a random string of characters (in case of duplicates)
 
 SETTING_RENAME = 0
+
+# Automatically start sorting through files once the number of files is known
+# Has to be either True or False
+
+SETTING_AUTOSTART = True
