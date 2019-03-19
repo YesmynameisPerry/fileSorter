@@ -15,7 +15,7 @@ CONST_RENAME_LIST = [
 # settings file strings
 CONST_SETTING_STRING_1 = "# Settings\n\n# File types (add new file extensions here to map them to the correct folder)\n\nSETTING_MAPPING = "
 CONST_SETTING_STRING_2 = "\n\n# Divide photos in \"year\" folders into \"month\" folders.\n\nSETTING_MONTHS = "
-CONST_SETTING_STRING_3 = "\n\n# Change the filename settings\n# Has to be a number between 0 and 3:\n# 0 -> do not change file names\n# 1 -> change the filename to be the full original path of the file\n\# 2 -> change the filename to the \"created date\" of the file\n# 3 -> change the filename to the \"created date\" and a random string of characters (in case of duplicates)\n\nSETTINGS_RENAME = "
+CONST_SETTING_STRING_3 = "\n\n# Change the filename settings\n# Has to be a number between 0 and 3:\n# 0 -> do not change file names\n# 1 -> change the filename to be the full original path of the file\n# 2 -> change the filename to the \"created date\" of the file\n# 3 -> change the filename to the \"created date\" and a random string of characters (in case of duplicates)\n\nSETTING_RENAME = "
 
 # internal logic constants
 CONST_NOT_KNOWN = "unknown command or value yay"

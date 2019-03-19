@@ -3,33 +3,33 @@
 # File types (add new file extensions here to map them to the correct folder)
 
 SETTING_MAPPING = {
-  "photos": [
-    "png",
-    "jpg",
-    "jpeg",
-    "bmp",
-    "gif"
-  ],
-  "videos": [
-    "mov",
-    "mp4",
-    "m4a",
-    "flv",
-    "avi",
-    "wmv",
-    "mkv"
-  ]
-  "documents": [
-    "doc",
-    "docx",
-    "xls",
-    "xlsx",
-    "ppt",
-    "pptx",
-    "pdf",
-    "csv",
-    "odt",
-  ]
+    "documents": [
+        "doc",
+        "docx",
+        "xls",
+        "xlsx",
+        "ppt",
+        "pptx",
+        "pdf",
+        "csv",
+        "odt"
+    ],
+    "photos": [
+        "png",
+        "jpg",
+        "jpeg",
+        "bmp",
+        "gif"
+    ],
+    "videos": [
+        "mov",
+        "mp4",
+        "m4a",
+        "flv",
+        "avi",
+        "wmv",
+        "mkv"
+    ]
 }
 
 # Divide photos in "year" folders into "month" folders.
@@ -44,6 +44,3 @@ SETTING_MONTHS = True
 # 3 -> change the filename to the "created date" and a random string of characters (in case of duplicates)
 
 SETTING_RENAME = 0
-
-
-
