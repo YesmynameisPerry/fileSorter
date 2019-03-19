@@ -32,6 +32,18 @@ SETTING_MAPPING = {
   ]
 }
 
-# Divide 'year' folders into 'month' folders.
+# Divide photos in "year" folders into "month" folders.
 
 SETTING_MONTHS = True
+
+# Change the filename settings
+# Has to be a number between 0 and 3:
+# 0 -> do not change file names
+# 1 -> change the filename to be the full original path of the file
+# 2 -> change the filename to the "created date" of the file
+# 3 -> change the filename to the "created date" and a random string of characters (in case of duplicates)
+
+SETTING_RENAME = 0
+
+
+
