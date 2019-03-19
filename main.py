@@ -32,7 +32,6 @@ done
 from constants import *
 from settings import *
 from helpers import *
-from json import dumps
 
 SETTING_RENAME_VALUE = CONST_RENAME_LIST[SETTING_RENAME]
 
@@ -43,20 +42,21 @@ enteredLoop = False
 
 while not IsOkToStart:
     enteredLoop = True
-    # print("Select the source folder (the one that contains all the files to be sorted)")
-    # sourceFolder = getFolderName()
-    #
-    # print("Select the destination folder (the one that will contain the sorted files)")
-    # destinationFolder = getFolderName()
 
-    print(dumps(SETTING_MAPPING, indent=4, sort_keys=True, separators=(",", ": ")))
+    print("Select the source folder (the one that contains all the files to be sorted)")
+    sourceFolder = getFolderName()
+    
+    print("Select the destination folder (the one that will contain the sorted files)")
+    destinationFolder = getFolderName()
+
+    print(formatMapping(SETTING_MAPPING))
     print(CONST_CURRENT_MAPPING_OK)
 
     loop = True if getYesNo("('yes'/'no') > ") == CONST_NO else False
 
     while loop:
         print("Current Mapping:")
-        print(dumps(SETTING_MAPPING, indent=4, sort_keys=True, separators=(",", ": ")))
+        print(formatMapping(SETTING_MAPPING))
         print("What change would you like to make? (write 'none' to continue)")
         print("[add/remove] [filetype] [to/from] [format]")
         print("eg: add png to photos")
@@ -90,7 +90,7 @@ while not IsOkToStart:
     print("Destination: " + destinationFolder)
     print("Will " + ("" if SETTING_MONTHS else "not ") + "divide years into months")
     print("Current filetype mapping:")
-    print(dumps(SETTING_MAPPING, indent=4, sort_keys=True, separators=(",", ": ")))
+    print(formatMapping(SETTING_MAPPING))
     print("Will " + ("" if SETTING_AUTOSTART else "not ") + "automatically start once scanning is complete")
     IsOkToStart = True if getYesNo("('yes'/'no') > ") == CONST_YES else False
 

@@ -86,3 +86,7 @@ def operate(operation, fileType, mapping):
         else:
             del mapping[category]
         return mapping
+
+def formatMapping(mapping):
+    from json import dumps
+    return dumps(mapping, indent=4, sort_keys=True, separators=(",", ": "))
