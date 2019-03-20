@@ -33,9 +33,10 @@ def getYesNo(prompt):
 # saves the given settings in the destination
 def saveSettings(destination, mapping, months, rename, autoStart):
     try:
-        saveString = CONST_SETTING_STRING_1 + dumps(mapping, indent=4, sort_keys=True, separators=(",", ": ")) + CONST_SETTING_STRING_2 + ("True" if months else "False") + CONST_SETTING_STRING_3 + str(rename) + CONST_SETTING_STRING_4 + ("True" if autoStart else "False")
+        saveString = CONST_SETTING_STRING_1 + formatMapping(mapping) + CONST_SETTING_STRING_2 + ("True" if months else "False") + CONST_SETTING_STRING_3 + str(rename) + CONST_SETTING_STRING_4 + ("True" if autoStart else "False")
         saveFile = open(destination, "w")
         saveFile.write(saveString)
+        saveFile.close()
         return True, "save succeeded with message: 'yay'"
     except Exception as e:
         return False, e
@@ -95,6 +96,27 @@ def operate(operation, fileType, mapping):
             del mapping[category]
         return mapping
 
+# returns a neat string that looks nice
 def formatMapping(mapping):
     from json import dumps
     return dumps(mapping, indent=4, sort_keys=True, separators=(",", ": "))
+
+# returns all the files in a folder
+def getFolderContents(currentDirectory, includeSubdirectories=False):
+    from os import walk, listdir
+    output = []
+    if includeSubdirectories:
+        for fileTuple in walk(currentDirectory):
+            for file in fileTuple[2]:
+                output += [(fileTuple[0].replace("\\", "/")+"/"+file)]
+    else:
+        files = listdir(currentDirectory)
+        for item in files:
+            if "." in item:
+                output += [currentDirectory.replace("\\", "/") + "/" + item]
+    return output
+
+# getStats on a file
+def getStatsFromFile(file):
+    from os import stat
+    return stat(file)

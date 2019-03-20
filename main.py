@@ -1,51 +1,22 @@
-"""
-~~ setup 
-
-select 'read' folder using gui
-select 'write' folder using gui
-
-print and edit mappings
-
-select putting photos into month folders
-
-select file renaming settings
-
-select auto or manual start
-
-print settings and confirm, else restart
-
-walk folder and print number of files
-
-start (auto or manual based on setting above)
-
-~~ end setup
-
-~~ cleaning
-
-live percent moved counter on screen
-
-~~ end cleaning
-
-done
-"""
-
-from constants import *
 from settings import *
 from helpers import *
+from time import localtime, strftime
+from shutil import move, copyfile
+import os
+
+saveLocation = "tempSave.py"
 
 SETTING_RENAME_VALUE = CONST_RENAME_LIST[SETTING_RENAME]
 
 print("hey yo lets organise some dang files")
 
 IsOkToStart = False
-enteredLoop = False
 
 while not IsOkToStart:
-    enteredLoop = True
 
     print("Select the source folder (the one that contains all the files to be sorted)")
     sourceFolder = getFolderName()
-    
+
     print("Select the destination folder (the one that will contain the sorted files)")
     destinationFolder = getFolderName()
 
@@ -94,12 +65,21 @@ while not IsOkToStart:
     print("Will " + ("" if SETTING_AUTOSTART else "not ") + "automatically start once scanning is complete")
     IsOkToStart = True if getYesNo("('yes'/'no') > ") == CONST_YES else False
 
-if enteredLoop:
-    saveSettings("settings.py", SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_AUTOSTART)
-    print("settings saved to settings.py")
+
+# print("Save these settings?")
+# if True if getYesNo("('yes'/'no') > ") == CONST_YES else False:
+#     saved = saveSettings(saveLocation, SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_AUTOSTART)
+#     if saved[0]:
+#         print("settings saved to " + saveLocation)
+#     else:
+#         print("saving failed lol")
+#         print(saved[1])
 
 # auto start might disappear if it turns out to take too long or be too hard
 
+#
+# sourceFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testSource"
+# destinationFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testDestination"
 
 # this allows the program to find the folder for an extension nice and fast
 reverseMapping = dict()
@@ -108,6 +88,17 @@ for key in SETTING_MAPPING:
     for extension in SETTING_MAPPING[key]:
         reverseMapping[extension] = key
 
+for file in getFolderContents(sourceFolder, True):
+    fileName = file.split("/")[-1]
+    extension = fileName.split(".")[-1].lower()
+    category = reverseMapping.get(extension, "default")
+    statsObj = getStatsFromFile(file)
+    newPath = destinationFolder + "/" + category + "/" + strftime('%Y/%b', localtime(statsObj.st_mtime)) + "/" + fileName
+    os.makedirs(os.path.dirname(newPath), exist_ok=True)
+    print(file)
+    print(newPath)
+    move(file, newPath)
+    print()
 
 """
 get file list

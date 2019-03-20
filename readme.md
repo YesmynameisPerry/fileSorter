@@ -41,3 +41,12 @@ based on the `created date` metadata that is part of the files.
  - User defined file type mapping (eg. treat `.png`, `.jpg` and `.bmp` files as the same 'image' type, treat `.mov` and `.mp4` as 'movies', etc.)
  - User defined 'search' and 'output' folders (enables easy running on the leftovers of a previous run to inlcude more filetypes)
  - Can either keep filenames the same, filenames are the path, filenames are the created date with or without a random string appended (to deal with duplicates)
+ 
+ ## To do
+ 
+  - Remove that auto start garbage
+  - Setting for either copy or move
+  - User defined save file input and output (skip changing settings)
+  - Make the settings actually do what they should
+  - Cleanup & refactor
+  - Public?

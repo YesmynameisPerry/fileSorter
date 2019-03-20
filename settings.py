@@ -3,7 +3,7 @@
 # File types (add new file extensions here to map them to the correct folder)
 
 SETTING_MAPPING = {
-    "documents": [
+    "documets": [
         "doc",
         "docx",
         "xls",
