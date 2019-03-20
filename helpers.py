@@ -53,10 +53,15 @@ def getFolderName():
     return inputName
 
 # adds or removes a filetype or category from the mapping dictionary
+# TODO - check that an extension isn't in another key
 def operate(operation, fileType, mapping):
     extension = fileType["fileExtension"]
     category = fileType["category"]
     if operation == CONST_ADD:
+        addedExtensions = [item for sublist in [mapping[key] for key in mapping.keys()] for item in sublist]
+        if extension in addedExtensions:
+            print(extension + " is already added")
+            return mapping
         try:
             temp = set(mapping[category])
         except KeyError:

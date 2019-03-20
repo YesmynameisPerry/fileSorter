@@ -98,3 +98,26 @@ if enteredLoop:
     saveSettings("settings.py", SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_AUTOSTART)
     print("settings saved to settings.py")
 
+# auto start might disappear if it turns out to take too long or be too hard
+
+
+# this allows the program to find the folder for an extension nice and fast
+reverseMapping = dict()
+
+for key in SETTING_MAPPING:
+    for extension in SETTING_MAPPING[key]:
+        reverseMapping[extension] = key
+
+
+"""
+get file list
+for each file:
+    try:
+        destination = mapping.get(fileExtension, extrasFolder)
+        year, month = tostring(fileMetadataDate)
+        move file (filepath, destination/year/month)
+        continue
+    except:
+        print(error o no)
+        log error to file
+"""
