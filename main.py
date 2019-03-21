@@ -10,9 +10,17 @@ SETTING_RENAME_VALUE = CONST_RENAME_LIST[SETTING_RENAME]
 
 print("hey yo lets organise some dang files")
 
-IsOkToStart = False
+print("do you want to use previously saved settings?")
+if True if getYesNo() == CONST_YES else False:
+    print("select the settings file:")
+    settingsName = getFileName()
+    # TODO - this
+    eval("from " + settingsName[:-3] + " import *")
 
-while not IsOkToStart:
+isOkToStart = False
+
+while not isOkToStart:
+
 
     print("Select the source folder (the one that contains all the files to be sorted)")
     sourceFolder = getFolderName()
@@ -23,7 +31,7 @@ while not IsOkToStart:
     print(formatMapping(SETTING_MAPPING))
     print(CONST_CURRENT_MAPPING_OK)
 
-    loop = True if getYesNo("('yes'/'no') > ") == CONST_NO else False
+    loop = True if getYesNo() == CONST_NO else False
 
     while loop:
         print("Current Mapping:")
@@ -50,11 +58,13 @@ while not IsOkToStart:
         SETTING_MAPPING = operate(command, fileTypePair, SETTING_MAPPING)
 
     print("Do you want 'year' folders to be divided into 'month' folders?")
-    SETTING_MONTHS = True if getYesNo("('yes'/'no') > ") == CONST_YES else False
+    SETTING_MONTHS = True if getYesNo() == CONST_YES else False
 
-    print("This program will scan the source folder and find all the files, displaying a total count.")
-    print("Do you want to automatically start sorting once this is done?")
-    SETTING_AUTOSTART = True if getYesNo("('yes'/'no') > ") == CONST_YES else False
+    print("This program will either move all the files (fast) or copy all the files (slow)")
+    print("Do you want to move the files?")
+    SETTING_COPY_OR_MOVE = CONST_MOVE if getYesNo() == CONST_YES else CONST_COPY
+
+    # TODO - allow changing of file renaming setting
 
     print("Are the following settings ok?")
     print("Source: " + sourceFolder)
@@ -62,22 +72,21 @@ while not IsOkToStart:
     print("Will " + ("" if SETTING_MONTHS else "not ") + "divide years into months")
     print("Current filetype mapping:")
     print(formatMapping(SETTING_MAPPING))
-    print("Will " + ("" if SETTING_AUTOSTART else "not ") + "automatically start once scanning is complete")
-    IsOkToStart = True if getYesNo("('yes'/'no') > ") == CONST_YES else False
+    print("Will " + ("copy " if SETTING_COPY_OR_MOVE == CONST_COPY else "move ") + "files to the destination")
+    isOkToStart = True if getYesNo() == CONST_YES else False
 
 
-# print("Save these settings?")
-# if True if getYesNo("('yes'/'no') > ") == CONST_YES else False:
-#     saved = saveSettings(saveLocation, SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_AUTOSTART)
-#     if saved[0]:
-#         print("settings saved to " + saveLocation)
-#     else:
-#         print("saving failed lol")
-#         print(saved[1])
+print("Save these settings?")
+if True if getYesNo() == CONST_YES else False:
+    saveLocation = input("Saved settings filename: ")
+    saveLocation += ".py" if (len(saveLocation) < 4 or saveLocation[-3:] != ".py") else ""
+    saved = saveSettings(saveLocation, SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_COPY_OR_MOVE)
+    if saved[0]:
+        print("settings saved to " + saveLocation)
+    else:
+        print("saving failed lol")
+        print(saved[1])
 
-# auto start might disappear if it turns out to take too long or be too hard
-
-#
 # sourceFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testSource"
 # destinationFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testDestination"
 
@@ -88,27 +97,37 @@ for key in SETTING_MAPPING:
     for extension in SETTING_MAPPING[key]:
         reverseMapping[extension] = key
 
-for file in getFolderContents(sourceFolder, True):
-    fileName = file.split("/")[-1]
-    extension = fileName.split(".")[-1].lower()
-    category = reverseMapping.get(extension, "default")
-    statsObj = getStatsFromFile(file)
-    newPath = destinationFolder + "/" + category + "/" + strftime('%Y/%b', localtime(statsObj.st_mtime)) + "/" + fileName
-    os.makedirs(os.path.dirname(newPath), exist_ok=True)
-    print(file)
-    print(newPath)
-    move(file, newPath)
-    print()
+# making the settings actually do a thing
+moveOrCopy = move if SETTING_COPY_OR_MOVE == CONST_MOVE else copyfile
+yearMonthFormat = "%y/%b" if SETTING_MONTHS else "%y"
+rename = lambda name, createTime: name  # TODO - make functions that do the right thing here
 
-"""
-get file list
-for each file:
+errorLog = open("ERRORS.txt", "w")
+
+for currentFile in getFolderContents(sourceFolder, True):
     try:
-        destination = mapping.get(fileExtension, extrasFolder)
-        year, month = tostring(fileMetadataDate)
-        move file (filepath, destination/year/month)
-        continue
-    except:
-        print(error o no)
-        log error to file
-"""
+        fileName = currentFile.split("/")[-1]
+        extension = fileName.split(".")[-1].lower()
+        category = reverseMapping.get(extension, "default")
+        fileCreateTime = getStatsFromFile(currentFile).st_mtime
+        newFileName = rename(fileName, fileCreateTime)
+        newPath = destinationFolder + "/" + category + "/" + strftime(yearMonthFormat, localtime(fileCreateTime)) + "/" + fileName
+        os.makedirs(os.path.dirname(newPath), exist_ok=True)
+        print(currentFile)
+        print(newPath)
+        moveOrCopy(currentFile, newPath)
+        print()
+    except Exception as e:
+        print("Problem encountered with file:")
+        print(currentFile)
+        print("Error encountered:")
+        print(e)
+
+        errorLog.write("Problem encountered with file:")
+        errorLog.write(currentFile)
+        errorLog.write("Error encountered:")
+        errorLog.write(e)
+        errorLog.write()
+
+errorLog.close()
+

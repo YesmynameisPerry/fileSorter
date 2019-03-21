@@ -20,7 +20,7 @@ def getFiletypePair(theInput):
     return {"fileExtension": inputList[0], "category": inputList[-1]}
 
 # prompts the user until a valid reason to return CONST_YES or CONST_NO is given
-def getYesNo(prompt):
+def getYesNo(prompt = "('yes'/'no') > "):
     while True:
         theInput = str(input(prompt)).lower()
         if len(theInput) == 0 or len(theInput) > 4:
@@ -31,9 +31,9 @@ def getYesNo(prompt):
             return CONST_NO
     
 # saves the given settings in the destination
-def saveSettings(destination, mapping, months, rename, autoStart):
+def saveSettings(destination, mapping, months, rename, copyOrMove):
     try:
-        saveString = CONST_SETTING_STRING_1 + formatMapping(mapping) + CONST_SETTING_STRING_2 + ("True" if months else "False") + CONST_SETTING_STRING_3 + str(rename) + CONST_SETTING_STRING_4 + ("True" if autoStart else "False")
+        saveString = CONST_SETTING_STRING_1 + formatMapping(mapping) + CONST_SETTING_STRING_2 + ("True" if months else "False") + CONST_SETTING_STRING_3 + str(rename) + CONST_SETTING_STRING_4 + ("CONST_COPY" if copyOrMove == CONST_COPY else "CONST_MOVE")
         saveFile = open(destination, "w")
         saveFile.write(saveString)
         saveFile.close()
@@ -52,6 +52,11 @@ def getFolderName():
         inputName = filedialog.askdirectory()
     print(inputName + " chosen.")
     return inputName
+
+# uses tkinter to bring up a file selection window
+def getFileName():
+    # TODO - eat eggs and bacon for din dins
+    raise NotImplementedError
 
 # adds or removes a filetype or category from the mapping dictionary
 def operate(operation, fileType, mapping):

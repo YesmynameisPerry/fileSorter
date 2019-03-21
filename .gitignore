@@ -5,3 +5,4 @@ testSource
 testDestination
 testSource - Copy
 tempSave.py
+.vscode

@@ -1,5 +1,7 @@
 # Settings
 
+from constants import *
+
 # File types (add new file extensions here to map them to the correct folder)
 
 SETTING_MAPPING = {
@@ -45,7 +47,7 @@ SETTING_MONTHS = True
 
 SETTING_RENAME = 0
 
-# Automatically start sorting through files once the number of files is known
-# Has to be either True or False
+# Copy or move the files from the source to the destination
+# Has to be either CONST_MOVE or CONST_COPY
 
-SETTING_AUTOSTART = True
+SETTING_COPY_OR_MOVE = CONST_MOVE

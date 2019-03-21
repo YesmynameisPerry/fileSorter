@@ -44,9 +44,8 @@ based on the `created date` metadata that is part of the files.
  
  ## To do
  
-  - Remove that auto start garbage
-  - Setting for either copy or move
   - User defined save file input and output (skip changing settings)
   - Make the settings actually do what they should
   - Cleanup & refactor
+  - Maybe multi thread if I can be bothered
   - Public?
