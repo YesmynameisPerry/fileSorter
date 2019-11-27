@@ -5,7 +5,7 @@ from settings import DOCUMENT_LOOKUP as DocumentTypes
 
 __all__=["rename", "delay", "getFolderName", "getFullFolderContents", "getFileTypeGroup"]
 
-
+# TODO - wtf am i doing with these here
 usePauses: bool = False
 useEnters: bool = False
 

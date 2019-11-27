@@ -12,7 +12,6 @@ class ErrorLogger:
         self.errorCount: int = 0
         self.logErrors = logErrors
 
-
     def _getCurrentFormattedTime(self) -> str:
         """
         Returns a string of the current date and time

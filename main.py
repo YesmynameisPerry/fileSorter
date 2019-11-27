@@ -44,6 +44,4 @@ for currentFile in fullSourceDirectory:
     except:
         errorLogger.log()
 
-
-
 errorLogger.stopCapturing()
