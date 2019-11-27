@@ -1,10 +1,9 @@
-# Settings
+from typing import Dict, List
+__all__ = ["DOCUMENT_LOOKUP"]
 
-from constants import *
+# File types (add new file extensions in lowercase here to map them to the correct folder)
 
-# File types (add new file extensions here to map them to the correct folder)
-
-SETTING_MAPPING = {
+_SETTING_MAPPING: Dict[str, List[str]] = {
     "documents": [
         "doc",
         "docx",
@@ -34,20 +33,10 @@ SETTING_MAPPING = {
     ]
 }
 
-# Divide photos in "year" folders into "month" folders.
+# This is the reverse of the above, so the program can go DOCUMENT_LOOKUP["png"] and get "photos"
 
-SETTING_MONTHS = True
+DOCUMENT_LOOKUP: Dict[str, str] = {}
 
-# Change the filename settings
-# Has to be a number between 0 and 3:
-# 0 -> do not change file names
-# 1 -> change the filename to be the full original path of the file
-# 2 -> change the filename to the "created date" of the file
-# 3 -> change the filename to the "created date" and a random string of characters (in case of duplicates)
-
-SETTING_RENAME = 0
-
-# Copy or move the files from the source to the destination
-# Has to be either CONST_MOVE or CONST_COPY
-
-SETTING_COPY_OR_MOVE = CONST_MOVE
+for group in _SETTING_MAPPING:
+    for fileExtension in _SETTING_MAPPING[group]:
+        DOCUMENT_LOOKUP[fileExtension] = group

@@ -1,133 +1,162 @@
-from settings import *
-from helpers import *
-from time import localtime, strftime
-from shutil import move, copyfile
-import os
+from tkinter import Tk
+from tkinter import filedialog
+from time import sleep, strftime, localtime
+from os import walk, listdir, stat, makedirs
+from typing import List, Dict
+from shutil import copy2, move
+from io import TextIOWrapper
+from datetime import datetime
+from settings import DOCUMENT_LOOKUP as DocumentTypes
+from traceback import format_exc
 
-saveLocation = "tempSave.py"
+# SETUP
 
-SETTING_RENAME_VALUE = CONST_RENAME_LIST[SETTING_RENAME]
+usePauses: bool = False
+useEnters: bool = True
+logErrors: bool = False
 
-print("hey yo lets organise some dang files")
+Tk = Tk()
+Tk.withdraw()
 
-print("do you want to use previously saved settings?")
-if True if getYesNo() == CONST_YES else False:
-    print("select the settings file:")
-    settingsName = getFileName()
-    # TODO - this
-    eval("from " + settingsName[:-3] + " import *")
+# HELPERS
 
-isOkToStart = False
+def rename(fileName: str, fileNameData: Dict[str, str]) -> str:
+    """
+    Renames a file to whatever the user wants, depending on global variables
+    """
+    # TODO - provide different options for file renaming
+    return fileName
 
-while not isOkToStart:
+def delay(delay: int = 2) -> None:
+    """
+    Either sleeps for a default of 2 seconds, or waits for the use to press 'Enter', depending on global variables
+    """
+    if usePauses:
+        sleep(delay)
+    elif useEnters:
+        input("Press 'Enter' to proceed")
 
+def getFolderName(prompt: str) -> str:
+    """
+    Prompts the user to select a folder and doesn't let them progress until they do
+    """
+    print(prompt)
+    delay(2)
+    folderName: str = filedialog.askdirectory()
 
-    print("Select the source folder (the one that contains all the files to be sorted)")
-    sourceFolder = getFolderName()
-
-    print("Select the destination folder (the one that will contain the sorted files)")
-    destinationFolder = getFolderName()
-
-    print(formatMapping(SETTING_MAPPING))
-    print(CONST_CURRENT_MAPPING_OK)
-
-    loop = True if getYesNo() == CONST_NO else False
-
-    while loop:
-        print("Current Mapping:")
-        print(formatMapping(SETTING_MAPPING))
-        print("What change would you like to make? (write 'none' to continue)")
-        print("[add/remove] [filetype] [to/from] [format]")
-        print("eg: add png to photos")
-        print("or")
-        print("remove [format]")
-        print("eg: remove photos")
-        userInput = str(input("> ")).lower().split(" ", 1)
-        if userInput[0] == "none":
-            break
-        if len(userInput) == 1:
-            print(CONST_UNKNOWN_OPERATION)
-            print(CONST_CURRENT_MAPPING_OK)
-            continue
-        command = getCommand(userInput[0])
-        fileTypePair = getFiletypePair(userInput[1])
-        if command == CONST_NOT_KNOWN:
-            print(CONST_UNKNOWN_OPERATION)
-            print(CONST_CURRENT_MAPPING_OK)
-            continue
-        SETTING_MAPPING = operate(command, fileTypePair, SETTING_MAPPING)
-
-    print("Do you want 'year' folders to be divided into 'month' folders?")
-    SETTING_MONTHS = True if getYesNo() == CONST_YES else False
-
-    print("This program will either move all the files (fast) or copy all the files (slow)")
-    print("Do you want to move the files?")
-    SETTING_COPY_OR_MOVE = CONST_MOVE if getYesNo() == CONST_YES else CONST_COPY
-
-    # TODO - allow changing of file renaming setting
-
-    print("Are the following settings ok?")
-    print("Source: " + sourceFolder)
-    print("Destination: " + destinationFolder)
-    print("Will " + ("" if SETTING_MONTHS else "not ") + "divide years into months")
-    print("Current filetype mapping:")
-    print(formatMapping(SETTING_MAPPING))
-    print("Will " + ("copy " if SETTING_COPY_OR_MOVE == CONST_COPY else "move ") + "files to the destination")
-    isOkToStart = True if getYesNo() == CONST_YES else False
-
-
-print("Save these settings?")
-if True if getYesNo() == CONST_YES else False:
-    saveLocation = input("Saved settings filename: ")
-    saveLocation += ".py" if (len(saveLocation) < 4 or saveLocation[-3:] != ".py") else ""
-    saved = saveSettings(saveLocation, SETTING_MAPPING, SETTING_MONTHS, SETTING_RENAME, SETTING_COPY_OR_MOVE)
-    if saved[0]:
-        print("settings saved to " + saveLocation)
-    else:
-        print("saving failed lol")
-        print(saved[1])
-
-# sourceFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testSource"
-# destinationFolder = "D:/Jason/Documents/pythonEVERYTHING/photoFinder/testDestination"
-
-# this allows the program to find the folder for an extension nice and fast
-reverseMapping = dict()
-
-for key in SETTING_MAPPING:
-    for extension in SETTING_MAPPING[key]:
-        reverseMapping[extension] = key
-
-# making the settings actually do a thing
-moveOrCopy = move if SETTING_COPY_OR_MOVE == CONST_MOVE else copyfile
-yearMonthFormat = "%y/%b" if SETTING_MONTHS else "%y"
-rename = lambda name, createTime: name  # TODO - make functions that do the right thing here
-
-errorLog = open("ERRORS.txt", "w")
-
-for currentFile in getFolderContents(sourceFolder, True):
-    try:
-        fileName = currentFile.split("/")[-1]
-        extension = fileName.split(".")[-1].lower()
-        category = reverseMapping.get(extension, "default")
-        fileCreateTime = getStatsFromFile(currentFile).st_mtime
-        newFileName = rename(fileName, fileCreateTime)
-        newPath = destinationFolder + "/" + category + "/" + strftime(yearMonthFormat, localtime(fileCreateTime)) + "/" + fileName
-        os.makedirs(os.path.dirname(newPath), exist_ok=True)
-        print(currentFile)
-        print(newPath)
-        moveOrCopy(currentFile, newPath)
+    while folderName == "":
         print()
+        print("No folder chosen, please choose a folder.")
+        delay(2)
+        folderName: str = filedialog.askdirectory()
+    
+    return folderName
+
+def getFullFolderContents(directoryPath: str) -> List[str]:
+    """
+    Walks the given directory and returns a list of all files in the directory and all subdirectories
+    """
+    output: List[str] = []
+    for fileTuple in walk(directoryPath):
+        for fileName in fileTuple[2]:
+            output += [(fileTuple[0].replace("\\", "/")+"/"+fileName)]
+    return output
+
+def getCurrentFormattedTime() -> str:
+    """
+    Returns a string of the current date and time
+    """
+    return datetime.now().strftime("%d/%m/%Y %H:%M:%S.%f")
+
+def getFileTypeGroup(fileExtension: str, default: str = "unknown") -> str:
+    try:
+        return DocumentTypes[fileExtension.lower()]
+    except KeyError:
+        return default
+
+class ErrorLogger:
+    """
+    Enables you to throw your errors into it and have them logged nicely to a lil file for you
+    """
+    def __init__(self, errorLogFileName: str = "errorLog.txt", resetFile=False):
+        self.errorFileName: str = errorLogFileName
+        self.errorFile: TextIOWrapper = open(errorLogFileName, "w" if resetFile else "a")
+        self.ableToCaptureErrors: bool = False
+        self.errorCount: int = 0
+    
+    def startCapturing(self) -> None:
+        """
+        Must be called before logging any errors
+        """
+        if not logErrors:
+            return
+        if self.ableToCaptureErrors:
+            print("Error capturing is already enabled")
+            return
+        self.ableToCaptureErrors: bool = True
+        self.errorFile.write(f"\n~~ ERROR CAPTURING BEGINNING AT {getCurrentFormattedTime()} ~~\n")
+
+    def log(self, additionalContext=None) -> None:
+        """
+        Logs the most recent error to the log file, requires startCapturing to have been called first
+        """
+        if not logErrors:
+            return
+        if not self.ableToCaptureErrors:
+            raise RuntimeError("Error capturing is not enabled yet, run ErrorLogger.startCapturing() first.")
+        self.errorCount += 1
+        self.errorFile.write(f"\nError at {getCurrentFormattedTime()}: {format_exc()}")
+        if additionalContext != None:
+            self.errorFile.write(f"Additional context: {additionalContext}\n")
+        self.errorFile.write("~~~~~~~~~~")
+
+    def stopCapturing(self) -> None:
+        """
+        Safely closes the error log file, must be called before the program exits
+        """
+        if not logErrors:
+            return
+        if not self.ableToCaptureErrors:
+            print("Error capturing is already disabled")
+            return
+        self.ableToCaptureErrors: bool = False
+        self.errorFile.write(f"\n~~ ERROR CAPTURING ENDING AT {getCurrentFormattedTime()} ~~\n")
+        self.errorFile.close()
+        if self.errorCount > 0:
+            print(f"{self.errorCount} error{('s' if self.errorCount > 1 else '')} encountered. They have been logged to {self.errorFileName}.")
+        self.errorCount: int = 0
+
+# LOGIC
+
+errorLogger: ErrorLogger = ErrorLogger()
+errorLogger.startCapturing()
+
+sourceFolderName: str = getFolderName("Select the source folder (The one containing unorganised photos)")
+destinationFolderName: str = getFolderName("Select the destination folder (The one that will contain organised photos)")
+
+fullSourceDirectory: List[str] = getFullFolderContents(sourceFolderName)
+
+print(f"Found {len(fullSourceDirectory)} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
+
+for currentFile in fullSourceDirectory:
+    try:
+        fileName: str = currentFile.split("/")[-1]
+        fileExtension: str = fileName.split(".")[-1]
+        fileGroup: str = getFileTypeGroup(fileExtension)
+        fileCreatedFloat: float = stat(currentFile).st_mtime
+        fileTimeData: Dict[str, str] = {
+            "day": strftime("%d", localtime(fileCreatedFloat)),
+            "month": strftime("%B", localtime(fileCreatedFloat)),
+            "year": strftime("%Y", localtime(fileCreatedFloat))
+        }
+
+        newFileName: str = rename(fileName, fileTimeData)
+        newFilePath: str = f"{destinationFolderName}/{fileGroup}/{fileTimeData['year']}/{fileTimeData['month']}"
+
+        makedirs(newFilePath, exist_ok=True)
+        copy2(currentFile, f"{newFilePath}/{newFileName}")
+
     except Exception as e:
-        print("Problem encountered with file:")
-        print(currentFile)
-        print("Error encountered:")
-        print(e)
+        errorLogger.log()
 
-        errorLog.write("Problem encountered with file:")
-        errorLog.write(currentFile)
-        errorLog.write("Error encountered:")
-        errorLog.write(e)
-        errorLog.write()
-
-errorLog.close()
-
+errorLogger.stopCapturing()

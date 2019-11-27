@@ -6,3 +6,4 @@ testDestination
 testSource - Copy
 tempSave.py
 .vscode
+errorLog.txt
