@@ -5,7 +5,7 @@ class ErrorLogger:
     """
     Enables you to throw your errors into it and have them logged nicely to a lil file for you
     """
-    def __init__(self, errorLogFileName: str = "errorLog.txt", resetFile: bool = False, logErrors: bool = True):
+    def __init__(self, errorLogFileName: str = "errorLog.txt", *, resetFile: bool = False, logErrors: bool = True):
         self.errorFileName: str = errorLogFileName
         self.errorFile: TextIOWrapper = open(errorLogFileName, "w" if resetFile else "a")
         self.ableToCaptureErrors: bool = False
