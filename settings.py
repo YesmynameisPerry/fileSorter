@@ -33,7 +33,7 @@ _SETTING_MAPPING: Dict[str, List[str]] = {
     ]
 }
 
-# This is the reverse of the above, so the program can go DOCUMENT_LOOKUP["png"] and get "photos"
+# This is the automatically generated reverse of the above, so the program can go DOCUMENT_LOOKUP["png"] and get "photos"
 
 DOCUMENT_LOOKUP: Dict[str, str] = {}
 
