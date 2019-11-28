@@ -31,7 +31,7 @@ for currentFile in fullSourceDirectory:
         fileCreatedFloat: float = stat(currentFile).st_mtime
         fileTimeData: Dict[str, str] = {
             "day": strftime("%d", localtime(fileCreatedFloat)),
-            "month": strftime("%B", localtime(fileCreatedFloat)),
+            "month": strftime("%m-%B", localtime(fileCreatedFloat)),
             "year": strftime("%Y", localtime(fileCreatedFloat))
         }
 
