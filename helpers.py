@@ -7,9 +7,9 @@ from string import ascii_lowercase
 
 __all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup"]
 
-def rename(fileName: str, fullFilePath: str,fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
+def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
-    Renames a file to whatever the user wants, depending on global variables
+    Renames a file to whatever the user wants
     """
     if method not in RenameMethod:
         raise ValueError(f"Given rename method {method} is not a valid member of the class RenameMethod")
@@ -65,6 +65,9 @@ def getFullFolderContents(directoryPath: str) -> List[str]:
     return output
 
 def getFileTypeGroup(fileExtension: str, default: str = UNKNOWN_FOLDER_NAME) -> str:
+    """
+    Returns the type of file based on the mapping in settings.py
+    """
     try:
         return DOCUMENT_LOOKUP[fileExtension.lower()]
     except KeyError:
