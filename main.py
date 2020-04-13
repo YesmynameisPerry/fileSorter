@@ -13,6 +13,8 @@ Tk.withdraw()
 
 # LOGIC
 
+# TODO - cli
+
 errorLogger: ErrorLogger = ErrorLogger(logErrors=True, resetFile=True)
 errorLogger.startCapturing()
 
