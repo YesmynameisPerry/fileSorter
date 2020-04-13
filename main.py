@@ -2,7 +2,7 @@ from tkinter import Tk
 from time import strftime, localtime
 from os import stat, makedirs, path
 from typing import List, Dict, Tuple
-from shutil import copy2, move
+from shutil import move
 from helpers import *
 from ErrorLogger import ErrorLogger
 

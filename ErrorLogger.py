@@ -1,6 +1,8 @@
 from traceback import format_exc
 from datetime import datetime
 from io import TextIOWrapper
+from typing import Dict
+from json import dumps
 
 class ErrorLogger:
     """
@@ -32,7 +34,7 @@ class ErrorLogger:
         self.ableToCaptureErrors: bool = True
         self.errorFile.write(f"\n~~ ERROR CAPTURING BEGINNING AT {self._getCurrentFormattedTime()} ~~\n")
 
-    def log(self, additionalContext=None) -> None:
+    def log(self, additionalContext: Dict[str, str] =None) -> None:
         """
         Logs the most recent error to the log file, requires startCapturing to have been called first
         """
@@ -43,7 +45,7 @@ class ErrorLogger:
         self.errorCount += 1
         self.errorFile.write(f"\nError at {self._getCurrentFormattedTime()}: {format_exc()}")
         if additionalContext is None:
-            self.errorFile.write(f"Additional context: {additionalContext}\n")
+            self.errorFile.write(f"Additional context: {dumps(additionalContext, indent=2)}\n")
         self.errorFile.write("~~~~~~~~~~")
 
     def stopCapturing(self) -> None:
