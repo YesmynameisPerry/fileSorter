@@ -1,49 +1,56 @@
 from typing import Dict, List
 from tkinter import filedialog
 from os import walk
-from settings import DOCUMENT_LOOKUP as DocumentTypes
+from settings import *
+from random import choice
+from string import ascii_lowercase
 
-__all__=["rename", "delay", "getFolderName", "getFullFolderContents", "getFileTypeGroup"]
+__all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup"]
 
-# TODO - wtf am i doing with these here
-usePauses: bool = False
-useEnters: bool = False
-
-def rename(fileName: str, fileNameData: Dict[str, str]) -> str:
+def rename(fileName: str, fullFilePath: str,fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
     Renames a file to whatever the user wants, depending on global variables
     """
-    # TODO - provide different options for file renaming
-    """
-    don't change the filename (unless clash)
-    append random string to end of filename (to avoid clash, or only do in event of clash)
-    change file name to dd/mm/yyyy or something similar
-    make filename equal full original path (replace '/' with '-' or similar)
-    """
-    return fileName
+    if method not in RenameMethod:
+        raise ValueError(f"Given rename method {method} is not a valid member of the class RenameMethod")
 
-def delay(delay: int = 2) -> None:
-    """
-    Either sleeps for a default of 2 seconds, or waits for the use to press 'Enter', depending on global variables
-    """
-    if usePauses:
-        sleep(delay)
-    elif useEnters:
-        input("Press 'Enter' to proceed")
+    if method == RenameMethod.noModify:
+        return fileName
+
+    fileNameParts: List[str] = fileName.split(".")
+    originalName: str = ".".join(fileNameParts[:-1])
+    fileType: str = "." + fileNameParts[-1]
+
+    if method == RenameMethod.tagDuplicate:
+        randomString: str = ''.join(choice(ascii_lowercase) for _ in range(5))
+        return f"{originalName}-DUPLICATE-{randomString}{fileType}" if exists else fileName
+
+    if method == RenameMethod.date:
+        return f"{fileTimeData['year']}-{fileTimeData['monthNumber']}-{fileTimeData['day']}_{fileName}"
+
+    if method == RenameMethod.time:
+        return f"{fileTimeData['hour']}-{fileTimeData['minute']}-{fileTimeData['second']}_{fileName}"
+
+    if method == RenameMethod.dateTime:
+        return f"{fileTimeData['year']}-{fileTimeData['monthNumber']}-{fileTimeData['day']}_{fileTimeData['hour']}-{fileTimeData['minute']}-{fileTimeData['second']}_{fileName}"
+
+    if method == RenameMethod.originalPath:
+        return fullFilePath.replace("/", ".")
+
+    raise NotImplementedError(f"Given rename method {method} has no implementation")
+
 
 def getFolderName(prompt: str) -> str:
     """
     Prompts the user to select a folder and doesn't let them progress until they do
     """
     print(prompt)
-    delay()
-    folderName: str = filedialog.askdirectory()
+    folderName: str = filedialog.askdirectory(title=prompt)
 
     while folderName == "":
         print()
         print("No folder chosen, please choose a folder.")
-        delay()
-        folderName: str = filedialog.askdirectory()
+        folderName: str = filedialog.askdirectory(title=prompt)
     
     return folderName
 
@@ -57,8 +64,8 @@ def getFullFolderContents(directoryPath: str) -> List[str]:
             output += [(fileTuple[0].replace("\\", "/")+"/"+fileName)]
     return output
 
-def getFileTypeGroup(fileExtension: str, default: str = "unknown") -> str:
+def getFileTypeGroup(fileExtension: str, default: str = UNKNOWN_FOLDER_NAME) -> str:
     try:
-        return DocumentTypes[fileExtension.lower()]
+        return DOCUMENT_LOOKUP[fileExtension.lower()]
     except KeyError:
         return default

@@ -1,7 +1,7 @@
 from tkinter import Tk
 from time import strftime, localtime
-from os import stat, makedirs
-from typing import List, Dict
+from os import stat, makedirs, path
+from typing import List, Dict, Tuple
 from shutil import copy2, move
 from helpers import *
 from ErrorLogger import ErrorLogger
@@ -21,23 +21,36 @@ destinationFolderName: str = getFolderName("Select the destination folder (The o
 
 fullSourceDirectory: List[str] = getFullFolderContents(sourceFolderName)
 
-print(f"Found {len(fullSourceDirectory)} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
+total: int = len(fullSourceDirectory)
+
+print(f"Found {total} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
+
+count: int = 0
 
 for currentFile in fullSourceDirectory:
     try:
+        count += 1
+        if count % 100 == 0:
+            print(f"{count} out of {total}")
         fileName: str = currentFile.split("/")[-1]
         fileExtension: str = fileName.split(".")[-1]
         fileGroup: str = getFileTypeGroup(fileExtension)
         fileCreatedFloat: float = stat(currentFile).st_mtime
+        localFileCreatedTime: Tuple = localtime(fileCreatedFloat)
         fileTimeData: Dict[str, str] = {
-            "day": strftime("%d", localtime(fileCreatedFloat)),
-            "month": strftime("%m-%B", localtime(fileCreatedFloat)),
-            "year": strftime("%Y", localtime(fileCreatedFloat))
+            "microsecond": strftime("%f", localFileCreatedTime),
+            "second": strftime("%S", localFileCreatedTime),
+            "minute": strftime("%M", localFileCreatedTime),
+            "hour": strftime("%H", localFileCreatedTime),
+            "day": strftime("%d", localFileCreatedTime),
+            "monthNumber": strftime("%m", localFileCreatedTime),
+            "month": strftime("%m-%B", localFileCreatedTime),
+            "year": strftime("%Y", localFileCreatedTime)
         }
 
-        newFileName: str = rename(fileName, fileTimeData)
-        newFilePath: str = f"{destinationFolderName}/{fileGroup}/{fileTimeData['year']}/{fileTimeData['month']}"
-
+        newFilePath: str = f"{destinationFolderName}/{fileGroup}/{fileTimeData['year']}/{fileTimeData['month']}/{fileTimeData['day']}"
+        isFileAlreadyCopied: bool = path.exists(f"{newFilePath}/{fileName}")
+        newFileName: str = rename(fileName, currentFile, fileTimeData, isFileAlreadyCopied)
         makedirs(newFilePath, exist_ok=True)
         move(currentFile, f"{newFilePath}/{newFileName}")
 

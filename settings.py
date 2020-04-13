@@ -1,7 +1,10 @@
 from typing import Dict, List
-__all__ = ["DOCUMENT_LOOKUP"]
+from enum import Enum
+__all__ = ["DOCUMENT_LOOKUP", "UNKNOWN_FOLDER_NAME", "RenameMethod", "DEFAULT_RENAME_METHOD"]
 
 # File types (add new file extensions in lowercase here to map them to the correct folder)
+
+UNKNOWN_FOLDER_NAME: str = "unknown"
 
 _SETTING_MAPPING: Dict[str, List[str]] = {
     "documents": [
@@ -29,9 +32,24 @@ _SETTING_MAPPING: Dict[str, List[str]] = {
         "flv",
         "avi",
         "wmv",
-        "mkv"
+        "mkv",
+        "mod"
+    ],
+    "audio": [
+        "mp3"
     ]
 }
+
+class RenameMethod(Enum):
+    noModify: str = "no modify"
+    tagDuplicate: str = "tag duplicate"
+    date: str = "date"
+    time: str = "time"
+    dateTime: str = "date time"
+    originalPath: str = "original path"
+
+
+DEFAULT_RENAME_METHOD = RenameMethod.tagDuplicate
 
 # This is the automatically generated reverse of the above, so the program can go DOCUMENT_LOOKUP["png"] and get "photos"
 

@@ -1,5 +1,6 @@
 from traceback import format_exc
 from datetime import datetime
+from io import TextIOWrapper
 
 class ErrorLogger:
     """
@@ -12,7 +13,8 @@ class ErrorLogger:
         self.errorCount: int = 0
         self.logErrors = logErrors
 
-    def _getCurrentFormattedTime(self) -> str:
+    @staticmethod
+    def _getCurrentFormattedTime() -> str:
         """
         Returns a string of the current date and time
         """
@@ -40,7 +42,7 @@ class ErrorLogger:
             raise RuntimeError("Error capturing is not enabled yet, run ErrorLogger.startCapturing() first.")
         self.errorCount += 1
         self.errorFile.write(f"\nError at {self._getCurrentFormattedTime()}: {format_exc()}")
-        if additionalContext != None:
+        if additionalContext is None:
             self.errorFile.write(f"Additional context: {additionalContext}\n")
         self.errorFile.write("~~~~~~~~~~")
 
