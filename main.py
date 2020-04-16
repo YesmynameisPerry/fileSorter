@@ -19,11 +19,15 @@ errorLogger.startCapturing()
 sourceFolderName: str = getFolderName("Select the source folder (The one containing unorganised files)")
 destinationFolderName: str = getFolderName("Select the destination folder (The one that will contain organised files)")
 
+print(f"\nMove all files from:\n{sourceFolderName}\nto:\n{destinationFolderName}")
+if not yesNo():
+    exit(0)
+
 fullSourceDirectory: List[str] = getFullFolderContents(sourceFolderName)
 
 total: int = len(fullSourceDirectory)
 
-print(f"\nFound {total} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
+print(f"\nFound {total} files. Beginning sorting and moving to:\n{destinationFolderName}")
 
 count: int = 0
 

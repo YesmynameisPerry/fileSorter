@@ -12,7 +12,7 @@ except ImportError:
 from time import localtime, strptime, strftime
 from sys import stdout
 
-__all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup", "getFileCreatedTime", "getFileTimeData"]
+__all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup", "getFileCreatedTime", "getFileTimeData", "yesNo"]
 
 def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
@@ -100,3 +100,13 @@ def getFileTimeData(fileTime) -> Dict[str, str]:
         "month": strftime("%m-%B", fileTime),
         "year": strftime("%Y", fileTime)
     }
+
+def yesNo() -> bool:
+    while True:
+        response: str = str(input("yes/no > ")).lower()
+        if not response:
+            continue
+        elif response[0] == "n":
+            return False
+        elif response[0] == "y":
+            return True
