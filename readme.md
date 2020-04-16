@@ -3,14 +3,15 @@
 Trawls through a given directory tree and sorts things out, from something like this:
 
 ```
-root
+messyFolder
 ├ file1.png
 ├ folder1
 | ├ file3.png
 | └ innerfolder
 |   └ file2.png
 ├ folder2
-| └ file5.png
+| ├ file5.png
+| └ document.pdf
 └ folder3
   ├ file6.png
   ├ file7.png
@@ -21,32 +22,40 @@ root
 Into something like this:
 
 ```
-photos
-├ year1
-| ├ file1.png
-| ├ file2.png
-| └ file3.png
-└ year2
-  ├ file4.png
-  ├ file5.png
-  ├ file6.png
-  └ file7.png
+neatFolder
+├ photos
+| ├ 2015
+| | └ 01-January
+| |   ├ 03
+| |   | ├ file1.png
+| |   | └ file2.png
+| |   └ 25
+| |     └ file3.png
+| └ 2016
+|   ├ 05-May
+|   | └ 28
+|   |   ├ file4.png
+|   |   └ file5.png
+|   └ 12-December
+|     └ 25
+|       ├ file6.png
+|       └ file7.png
+└ documents
+  └ 2018
+    └ 10-October
+      └ 23
+        └ document.pdf
 ```
 
-It does this based on the `created date` metadata read from the files.
+It does this based on either the exif `photo taken` date or the `created date` metadata read from the files.
 
 ## How Do?
 
-`python main.py` and then have fun (make sure you're using python 3 because lordy there are lots of hint types which will break python 2)
+just run `python main.py` and it'll ask where you want to move from and to.
 
-## Features 
-
-- User defined file type mapping (eg. treat `.png`, `.jpg` and `.bmp` files as the same 'image' type, treat `.mov` and `.mp4` as 'movies', etc.)
-- User defined 'input' and 'output' folders (enables easy running on the leftovers of a previous run to inlcude more filetypes)
-- Logs any errors to a helpful lil file
+- It uses a mapping defined in `fileTypeMapping.json` to work out what folders to put each file type into
+  - eg. group `.png`, `.jpg` and `.bmp` files as images, group `.mkv` and `.mp4` as movies, etc.)
+  - modify `fileTypeMapping.json` to organise file types how you want
+  - any file types not mapped will be treated as `unknown`
+- Any files that encounter errors when moving will have the details logged to `error.log`
  
-## To do
-
-- Remove the folder tree once all files are gone
-- Can either keep filenames the same, filenames are the path, filenames are the created date with or without a random string appended (to deal with duplicates)
-- Can sort into years or years/months (make it an editable setting).

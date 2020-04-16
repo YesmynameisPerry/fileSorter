@@ -8,7 +8,7 @@ class ErrorLogger:
     """
     Enables you to throw your errors into it and have them logged nicely to a lil file for you
     """
-    def __init__(self, errorLogFileName: str = "errorLog.txt", *, resetFile: bool = False, logErrors: bool = True):
+    def __init__(self, errorLogFileName: str = "errors.log", *, resetFile: bool = False, logErrors: bool = True):
         self.errorFileName: str = errorLogFileName
         self.errorFile: TextIOWrapper = open(errorLogFileName, "w" if resetFile else "a")
         self.ableToCaptureErrors: bool = False
@@ -33,6 +33,7 @@ class ErrorLogger:
             return
         self.ableToCaptureErrors: bool = True
         self.errorFile.write(f"\n~~ ERROR CAPTURING BEGINNING AT {self._getCurrentFormattedTime()} ~~\n")
+        self.errorFile.flush()
 
     def log(self, additionalContext: Dict[str, str] =None) -> None:
         """
@@ -47,10 +48,11 @@ class ErrorLogger:
         if additionalContext is None:
             self.errorFile.write(f"Additional context: {dumps(additionalContext, indent=2)}\n")
         self.errorFile.write("~~~~~~~~~~")
+        self.errorFile.flush()
 
     def stopCapturing(self) -> None:
         """
-        Safely closes the error log file, must be called before the program exits
+        Safely closes the error log file, should be called before the program exits
         """
         if not self.logErrors:
             return

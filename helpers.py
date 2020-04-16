@@ -1,11 +1,12 @@
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from tkinter import filedialog
-from os import walk
+from os import walk, stat
 from settings import *
 from random import choice
 from string import ascii_lowercase
-
-__all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup"]
+from PIL import Image
+from time import localtime, strptime, strftime
+from sys import stdout
 
 def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
@@ -28,13 +29,7 @@ def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exist
     if method == RenameMethod.date:
         return f"{fileTimeData['year']}-{fileTimeData['monthNumber']}-{fileTimeData['day']}_{fileName}"
 
-    if method == RenameMethod.time:
-        return f"{fileTimeData['hour']}-{fileTimeData['minute']}-{fileTimeData['second']}_{fileName}"
-
-    if method == RenameMethod.dateTime:
-        return f"{fileTimeData['year']}-{fileTimeData['monthNumber']}-{fileTimeData['day']}_{fileTimeData['hour']}-{fileTimeData['minute']}-{fileTimeData['second']}_{fileName}"
-
-    if method == RenameMethod.originalPath:
+    if method == RenameMethod.originalFullPath:
         return fullFilePath.replace("/", ".")
 
     raise NotImplementedError(f"Given rename method {method} has no implementation")
@@ -42,15 +37,14 @@ def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exist
 
 def getFolderName(prompt: str) -> str:
     """
-    Prompts the user to select a folder and doesn't let them progress until they do
+    Prompts the user to select a folder, exit the program if not
     """
     print(prompt)
+    stdout.flush()
     folderName: str = filedialog.askdirectory(title=prompt)
-
-    while folderName == "":
-        print()
-        print("No folder chosen, please choose a folder.")
-        folderName: str = filedialog.askdirectory(title=prompt)
+    if folderName == "":
+        print("No folder selected, exiting")
+        exit(1)
     
     return folderName
 
@@ -72,3 +66,25 @@ def getFileTypeGroup(fileExtension: str, default: str = UNKNOWN_FOLDER_NAME) -> 
         return DOCUMENT_LOOKUP[fileExtension.lower()]
     except KeyError:
         return default
+
+def getFileCreatedTime(filePath: str) -> Tuple:
+    try:
+        # 36867 is the magical index of the 'date taken' exif tag, which is probably more accurate but only exists on image files
+        imageDateString: str = Image.open(filePath)._getexif()[36867]
+        if len(imageDateString) != 19:
+            raise ValueError("Date string isn't in the format 'YYYY:MM:DD HH:MM:SS'")
+        if imageDateString == '0000:00:00 00:00:00':
+            raise ValueError("Date string is default values")
+        return strptime(imageDateString, '%Y:%m:%d %H:%M:%S')
+    except (OSError, ValueError, KeyError, TypeError, AttributeError):
+        # for all files that fail to get the tag, just find the earliest known date for the file
+        fileStats = stat(filePath)
+        fileCreatedFloat: float = min(fileStats.st_mtime, fileStats.st_atime, fileStats.st_ctime)
+        return localtime(fileCreatedFloat)
+
+def getFileTimeData(fileTime) -> Dict[str, str]:
+    return {
+        "day": strftime("%d", fileTime),
+        "month": strftime("%m-%B", fileTime),
+        "year": strftime("%Y", fileTime)
+    }

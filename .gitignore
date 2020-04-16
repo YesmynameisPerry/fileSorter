@@ -4,4 +4,4 @@ testSource
 testDestination
 testSource - Copy
 .vscode
-errorLog.txt
+errors.log
