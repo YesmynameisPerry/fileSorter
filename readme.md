@@ -23,7 +23,7 @@ Into something like this:
 
 ```
 neatFolder
-├ photos
+├ pictures
 | ├ 2015
 | | └ 01-January
 | |   ├ 03
@@ -47,7 +47,7 @@ neatFolder
         └ document.pdf
 ```
 
-It does this based on either the exif `photo taken` date or the `created date` metadata read from the files.
+It does this based on either the exif `date taken` tag or the `created date` metadata read from the files.
 
 ## How Do?
 

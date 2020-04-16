@@ -16,8 +16,8 @@ Tk.withdraw()
 errorLogger: ErrorLogger = ErrorLogger(logErrors=True, resetFile=True)
 errorLogger.startCapturing()
 
-sourceFolderName: str = getFolderName("Select the source folder (The one containing unorganised photos)")
-destinationFolderName: str = getFolderName("Select the destination folder (The one that will contain organised photos)")
+sourceFolderName: str = getFolderName("Select the source folder (The one containing unorganised files)")
+destinationFolderName: str = getFolderName("Select the destination folder (The one that will contain organised files)")
 
 fullSourceDirectory: List[str] = getFullFolderContents(sourceFolderName)
 

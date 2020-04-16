@@ -15,7 +15,7 @@ class RenameMethod(Enum):
 
 DEFAULT_RENAME_METHOD = RenameMethod.tagDuplicate
 
-# This is the automatically generated reverse of fileTypeMapping.json, so the program can go DOCUMENT_LOOKUP["png"] and get "photos"
+# This is the automatically generated reverse of fileTypeMapping.json, so the program can go DOCUMENT_LOOKUP["png"] and get "pictures"
 _SETTING_MAPPING: Dict[str, List[str]] = load(open("fileTypeMapping.json"))
 DOCUMENT_LOOKUP: Dict[str, str] = {}
 for group in _SETTING_MAPPING:
