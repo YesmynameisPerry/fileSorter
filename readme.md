@@ -1,4 +1,4 @@
-# Photo Finder
+# File Sorter
 
 Trawls through a given directory tree and sorts things out, from something like this:
 
