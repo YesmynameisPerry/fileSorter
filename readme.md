@@ -58,4 +58,9 @@ just run `python main.py` and it'll ask where you want to move from and to.
   - modify `fileTypeMapping.json` to organise file types how you want
   - any file types not mapped will be treated as `unknown`
 - Any files that encounter errors when moving will have the details logged to `error.log`
+
+## Requirements
+
+- [Python 3](https://www.python.org/)
+- [Pillow](https://pillow.readthedocs.io/en/stable/installation.html) (Python 3 fork of `PIL`, the `Python Imaging Library`)
  
