@@ -62,5 +62,5 @@ just run `python main.py` and it'll ask where you want to move from and to.
 ## Requirements
 
 - [Python 3](https://www.python.org/)
-- [Pillow](https://pillow.readthedocs.io/en/stable/installation.html) (Python 3 fork of `PIL`, the `Python Imaging Library`)
+- [Pillow](https://pillow.readthedocs.io/en/stable/installation.html) [Optional] (Python 3 fork of `PIL`, the `Python Imaging Library`.) If it's not present, exif data won't be used.
  

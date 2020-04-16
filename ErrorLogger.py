@@ -67,3 +67,6 @@ class ErrorLogger:
         if self.errorCount > 0:
             print(f"{self.errorCount} error{('s' if self.errorCount > 1 else '')} encountered. They have been logged to {self.errorFileName}.")
         self.errorCount: int = 0
+
+    def getErrorCount(self) -> int:
+        return self.errorCount

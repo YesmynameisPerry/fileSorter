@@ -4,7 +4,11 @@ from os import walk, stat
 from settings import *
 from random import choice
 from string import ascii_lowercase
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    print("PIL not found. EXIF data will not be used for image dates.\n")
+    Image = None
 from time import localtime, strptime, strftime
 from sys import stdout
 

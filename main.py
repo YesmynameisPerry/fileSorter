@@ -23,7 +23,7 @@ fullSourceDirectory: List[str] = getFullFolderContents(sourceFolderName)
 
 total: int = len(fullSourceDirectory)
 
-print(f"Found {total} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
+print(f"\nFound {total} files. Beginning cleanup process and outputting to:\n{destinationFolderName}")
 
 count: int = 0
 
@@ -49,5 +49,7 @@ for currentFile in fullSourceDirectory:
 
     except:
         errorLogger.log()
+
+print(f"\nSuccessfully processed {total-errorLogger.getErrorCount()} files.")
 
 errorLogger.stopCapturing()
