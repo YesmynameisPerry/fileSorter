@@ -16,7 +16,9 @@ _SETTING_MAPPING: Dict[str, List[str]] = {
         "pptx",
         "pdf",
         "csv",
-        "odt"
+        "odt",
+        "txt",
+        "rtf"
     ],
     "photos": [
         "png",
@@ -36,7 +38,9 @@ _SETTING_MAPPING: Dict[str, List[str]] = {
         "mod"
     ],
     "audio": [
-        "mp3"
+        "mp3",
+        "wav",
+        "ogg"
     ]
 }
 
