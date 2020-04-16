@@ -10,7 +10,7 @@ from sys import stdout
 
 def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
-    Renames a file to whatever the user wants
+    Renames a file based on the chosen method
     """
     if method not in RenameMethod:
         raise ValueError(f"Given rename method {method} is not a valid member of the class RenameMethod")
@@ -60,7 +60,7 @@ def getFullFolderContents(directoryPath: str) -> List[str]:
 
 def getFileTypeGroup(fileExtension: str, default: str = UNKNOWN_FOLDER_NAME) -> str:
     """
-    Returns the type of file based on the mapping in settings.py
+    Returns the type of file based on fileTypeMapping.json
     """
     try:
         return DOCUMENT_LOOKUP[fileExtension.lower()]
@@ -68,6 +68,9 @@ def getFileTypeGroup(fileExtension: str, default: str = UNKNOWN_FOLDER_NAME) -> 
         return default
 
 def getFileCreatedTime(filePath: str) -> Tuple:
+    """
+    Returns the best guess at the file's creation time, based on the metadata
+    """
     try:
         # 36867 is the magical index of the 'date taken' exif tag, which is probably more accurate but only exists on image files
         imageDateString: str = Image.open(filePath)._getexif()[36867]
@@ -83,6 +86,9 @@ def getFileCreatedTime(filePath: str) -> Tuple:
         return localtime(fileCreatedFloat)
 
 def getFileTimeData(fileTime) -> Dict[str, str]:
+    """
+    Returns a dict of dates to allow the final file path to be built
+    """
     return {
         "day": strftime("%d", fileTime),
         "month": strftime("%m-%B", fileTime),
