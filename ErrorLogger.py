@@ -4,6 +4,8 @@ from io import TextIOWrapper
 from typing import Dict
 from json import dumps
 
+__all__ = ["ErrorLogger"]
+
 class ErrorLogger:
     """
     Enables you to throw your errors into it and have them logged nicely to a lil file for you

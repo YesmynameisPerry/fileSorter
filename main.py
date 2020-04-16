@@ -1,11 +1,10 @@
 from tkinter import Tk
 from os import makedirs, path
-from typing import List, Dict, Tuple
 from shutil import move
+from typing import Dict, Tuple, List
 from helpers import *
 from ErrorLogger import ErrorLogger
 from sys import stdout
-
 
 # SETUP
 

@@ -8,6 +8,8 @@ from PIL import Image
 from time import localtime, strptime, strftime
 from sys import stdout
 
+__all__ = ["rename", "getFolderName", "getFullFolderContents", "getFileTypeGroup", "getFileCreatedTime", "getFileTimeData"]
+
 def rename(fileName: str, fullFilePath: str, fileTimeData: Dict[str, str], exists: bool, method: RenameMethod = DEFAULT_RENAME_METHOD) -> str:
     """
     Renames a file based on the chosen method
